@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden md:max-w-lg">
+    <div class="md:flex">
+        <div class="w-full p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Registrar Cliente</h2>
+            <form action="{{ url_for('register_client') }}" method="post" class="space-y-6">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
+                    <div class="mt-1">
+                        <input type="text" name="name" id="name" required
+                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                            placeholder="Ingrese el nombre del cliente">
+                    </div>
+                </div>
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Teléfono</label>
+                    <div class="mt-1">
+                        <input type="tel" name="phone" id="phone" required
+                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                            placeholder="Ingrese el número de teléfono">
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button type="submit"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Registrar Cliente
+                    </button>
+                </div>
+            </form>
+            <div class="mt-6">
+                <a href="{{ url_for('home') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                    &larr; Volver a la lista de clientes
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
