@@ -7,30 +7,52 @@
     <title>{% block title %}Micheladas App{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navgreen: {
+                            500: '#6bb989',
+                            600: '#75CB76',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
-<body class="flex flex-col h-full bg-gray-50 text-gray-900">
+<body class="flex flex-col min-h-screen bg-gray-50 text-gray-900">
     <!-- Barra de navegación -->
-    <nav class="bg-yellow-600 shadow-lg">
+    <nav class="bg-navgreen-600 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex-shrink-0 flex items-center">
-                    <h1 class="text-white text-xl font-bold">Micheladas "El Ultimo Trago"</h1>
+                    <h1 class="text-white text-xl font-bold">Miches la China</h1>
                 </div>
                 <div class="hidden sm:ml-6 sm:flex sm:items-center">
                     <div class="flex space-x-4">
-                        <a href="/"
-                            class="text-white hover:bg-yellow-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">Inicio</a>
+                        <a href="{{ url_for('home') }}"
+                            class="text-white hover:bg-navgreen-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">Inicio</a>
                     </div>
                 </div>
                 <div class="-mr-2 flex items-center sm:hidden">
                     <button type="button"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                        class="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white hover:bg-navgreen-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                         aria-controls="mobile-menu" aria-expanded="false">
                         <span class="sr-only">Abrir menú principal</span>
                         <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -44,40 +66,92 @@
         </div>
 
         <!-- Menú móvil -->
-        <div class="sm:hidden" id="mobile-menu">
+        <div class="sm:hidden hidden" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="/"
-                    class="text-white hover:bg-yellow-500 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Inicio</a>
+                <a href="{{ url_for('home') }}"
+                    class="text-white hover:bg-navgreen-500 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Inicio</a>
             </div>
         </div>
     </nav>
 
-    <!-- Contenido principal -->
-    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {% block content %}
-        {% endblock %}
-    </main>
+    <!-- Contenedor principal -->
+    <div class="flex-grow">
+        <!-- Mensajes Flash -->
+        <div id="flash-container" class="fixed top-4 right-4 z-50">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message animate-fade-in mb-4 p-4 rounded-md shadow-lg 
+                            {% if category == 'error' %}bg-red-100 text-red-800 border border-red-200
+                            {% else %}bg-green-100 text-green-800 border border-green-200{% endif %}">
+                            {{ message }}
+                            <button onclick="this.parentElement.remove()" class="float-right font-bold">&times;</button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Contenido principal -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center">
-                <p class="text-center md:text-left">&copy; 2025 Micheladas App. Todos los derechos reservados.</p>
+                <p class="text-center md:text-left">&copy; 2025 Miches la China. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
 
     <script>
         // Toggle mobile menu
-        const mobileMenuButton = document.querySelector('[aria-controls="mobile-menu"]');
-        const mobileMenu = document.getElementById('mobile-menu');
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.querySelector('[aria-controls="mobile-menu"]');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    const expanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+                    mobileMenuButton.setAttribute('aria-expanded', !expanded);
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
 
-        mobileMenuButton.addEventListener('click', () => {
-            const expanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-            mobileMenuButton.setAttribute('aria-expanded', !expanded);
-            mobileMenu.classList.toggle('hidden');
+            // Manejo mejorado del logout con SweetAlert
+            const logoutForm = document.getElementById('logout-form');
+            if (logoutForm) {
+                logoutForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    Swal.fire({
+                        title: 'Cerrando sesión',
+                        text: 'Serás redirigido al login',
+                        icon: 'success',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        willClose: () => {
+                            this.submit();
+                        }
+                    });
+                });
+            }
+
+            // Auto-cierre de mensajes flash después de 5 segundos
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.transition = 'opacity 1s ease-out';
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 1000);
+                }, 5000);
+            });
         });
     </script>
 </body>
-
 </html>

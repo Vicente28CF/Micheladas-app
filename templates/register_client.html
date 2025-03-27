@@ -4,37 +4,137 @@
 <div class="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden md:max-w-lg">
     <div class="md:flex">
         <div class="w-full p-6">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Registrar Cliente</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Registrar Nuevo</h2>
+            
+            <!-- Selector de tipo de registro -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Registro</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="showForm('mesa')"
+                        class="py-2 px-3 border rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        id="mesa-btn">
+                        Mesa
+                    </button>
+                    <button type="button" onclick="showForm('cliente')"
+                        class="py-2 px-3 border rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        id="cliente-btn">
+                        Cliente
+                    </button>
+                    <button type="button" onclick="showForm('pedido')"
+                        class="py-2 px-3 border rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        id="pedido-btn">
+                        Pedido
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Formulario dinámico -->
             <form action="{{ url_for('register_client') }}" method="post" class="space-y-6">
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
-                    <div class="mt-1">
-                        <input type="text" name="name" id="name" required
-                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                            placeholder="Ingrese el nombre del cliente">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="client_type" id="client_type" value="mesa">
+                
+                <!-- Formulario para Mesas -->
+                <div id="mesa-form">
+                    <div>
+                        <label for="mesa-number" class="block text-sm font-medium text-gray-700">Número de Mesa</label>
+                        <select name="mesa-number" id="mesa-number" required
+                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="">Seleccione una mesa</option>
+                            <option value="1">Mesa 1</option>
+                            <option value="2">Mesa 2</option>
+                            <option value="3">Mesa 3</option>
+                            <option value="4">Mesa 4</option>
+                            <option value="5">Mesa 5</option>
+                        </select>
+                    </div>
+                    <div class="mt-4">
+                        <label for="mesa-capacity" class="block text-sm font-medium text-gray-700">Capacidad</label>
+                        <input type="number" name="mesa-capacity" id="mesa-capacity" required min="1" max="10"
+                            class="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                            placeholder="Ej: 4">
                     </div>
                 </div>
-                <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-700">Teléfono</label>
-                    <div class="mt-1">
-                        <input type="tel" name="phone" id="phone" required
-                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                            placeholder="Ingrese el número de teléfono">
+                
+                <!-- Formulario para Clientes (solo nombre) -->
+                <div id="cliente-form" class="hidden">
+                    <div>
+                        <label for="cliente-name" class="block text-sm font-medium text-gray-700">Nombre del Cliente</label>
+                        <input type="text" name="cliente-name" id="cliente-name" required
+                            class="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                            placeholder="Ej: Juan Pérez">
                     </div>
                 </div>
+                
+                <!-- Formulario para Pedidos (con nombre directo, no selector) -->
+                <div id="pedido-form" class="hidden">
+                    <div>
+                        <label for="pedido-cliente" class="block text-sm font-medium text-gray-700">Nombre del Cliente</label>
+                        <input type="text" name="pedido-cliente" id="pedido-cliente" required
+                            class="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                            placeholder="Ej: María González">
+                    </div>
+                    <div class="mt-4">
+                        <label for="pedido-direccion" class="block text-sm font-medium text-gray-700">Dirección</label>
+                        <input type="text" name="pedido-direccion" id="pedido-direccion" required
+                            class="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                            placeholder="Ej: Calle Principal #123, Colonia Centro">
+                    </div>
+                    <div class="mt-4">
+                        <label for="pedido-desc" class="block text-sm font-medium text-gray-700">Descripción del Pedido</label>
+                        <textarea name="pedido-desc" id="pedido-desc" rows="3" required
+                            class="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                            placeholder="Ej: 2 Hamburguesas especiales, 1 Orden de papas grandes, 1 Refresco de 600ml"></textarea>
+                    </div>
+                    <div class="mt-4">
+                        <label for="pedido-notas" class="block text-sm font-medium text-gray-700">Notas adicionales</label>
+                        <textarea name="pedido-notas" id="pedido-notas" rows="2"
+                            class="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                            placeholder="Ej: Una hamburguesa sin pepinillos, papas con extra de aderezo"></textarea>
+                    </div>
+                </div>
+                
                 <div class="flex items-center justify-between">
                     <button type="submit"
                         class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Registrar Cliente
+                        Registrar
                     </button>
                 </div>
             </form>
+            
             <div class="mt-6">
                 <a href="{{ url_for('home') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                    &larr; Volver a la lista de clientes
+                    &larr; Volver al inicio
                 </a>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Mostrar el formulario correspondiente al tipo seleccionado
+    function showForm(type) {
+        // Ocultar todos los formularios primero
+        document.getElementById('mesa-form').classList.add('hidden');
+        document.getElementById('cliente-form').classList.add('hidden');
+        document.getElementById('pedido-form').classList.add('hidden');
+        
+        // Mostrar el formulario seleccionado
+        document.getElementById(type + '-form').classList.remove('hidden');
+        
+        // Actualizar el campo hidden con el tipo seleccionado
+        document.getElementById('client_type').value = type;
+        
+        // Actualizar estilos de los botones
+        document.getElementById('mesa-btn').classList.remove('bg-indigo-100', 'text-indigo-700', 'border-indigo-300');
+        document.getElementById('cliente-btn').classList.remove('bg-indigo-100', 'text-indigo-700', 'border-indigo-300');
+        document.getElementById('pedido-btn').classList.remove('bg-indigo-100', 'text-indigo-700', 'border-indigo-300');
+        
+        document.getElementById(type + '-btn').classList.add('bg-indigo-100', 'text-indigo-700', 'border-indigo-300');
+    }
+
+    // Mostrar formulario de mesas por defecto
+    document.addEventListener('DOMContentLoaded', function() {
+        showForm('mesa');
+    });
+</script>
 {% endblock %}
